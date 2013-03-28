@@ -66,3 +66,4 @@ def liga_gen(lista_orig):
                     
     # Devolvemos las dos listas
     return emp
+    
