@@ -5,7 +5,8 @@ def liga_gen(lista_orig):
     """
     Función que recibe una lista de enteros que representa
     los equipos o jugadores de una liga. Ordena la lista de
-    forma aleatoria (sorteo) y devuelve dos listas (local y
+    forma aleatoria (sorteo) y devuelve una lista de jornadas,
+    cada una de ellas contiene dos listas (local y
     visitante) que representan todos los enfrentamientos
     entre los elementos de la lista, alternándolos como local
     y visitante.
@@ -15,7 +16,7 @@ def liga_gen(lista_orig):
     """
 
     # Sorteamos el orden de los equipos
-    lista = []    
+    lista = []
     while len(lista_orig) != 0:
         num = randint(0,len(lista_orig)-1)
         lista.append(lista_orig[num])
@@ -25,43 +26,43 @@ def liga_gen(lista_orig):
     if len(lista) % 2 != 0:
         lista.append(-1)
     num_jornadas = len(lista) - 1
-    jornada = 0
+    partidos = len(lista)/2
     comodin = lista[-1]
+    emp = []
+    
+    for jornada in xrange(num_jornadas):
+        emp.append([])
+        emp[jornada].append([])
+        emp[jornada].append([])
 
-    for i in xrange(num_jornadas):
-        aux = []
         # Primera jornada
-        if i == 0:
-            local = []
-            visitante = []
-
-            for j in xrange(len(lista) / 2):
-                visitante.append([lista[-(j+2)]])
-                if j != len(lista) / 2 - 1:
-                    local.append([lista[j]])
+        if jornada == 0:
+            for i in xrange(partidos):
+                emp[jornada][1].append(lista[-(i+2)])
+                if i != partidos - 1:
+                    emp[jornada][0].append(lista[i])
                 else:
-                    local.append([comodin])
+                    emp[jornada][0].append(comodin)
         # Jornada par
-        elif (i % 2 != 0):
-            for j in xrange(len(local)):
-                aux.append(local[j][i-1])
-                local[j].append(visitante[j][i-1])
-                if j != 0:
-                    visitante[j].append(aux[j-1])
+        elif (jornada % 2 != 0):
+            for i in xrange(partidos):
+                emp[jornada][0].append(emp[jornada-1][1][i])
+                if i == 0:
+                    emp[jornada][1].append(comodin)
                 else:
-                    visitante[j].append(comodin)
+                    emp[jornada][1].append(emp[jornada-1][0][i-1])
         # Jornada impar
         else:
-            for j in xrange(len(local)):
-                aux.append(local[j][i-2])
-                if j == 0:
-                    local[j].append(visitante[j][i-2])
-                    visitante[j].append(visitante[j+1][i-2])
-                elif j == (len(local) - 1):
-                    local[j].append(comodin)
-                    visitante[j].append(visitante[j][i-1])
+            for i in xrange(partidos):
+                if i == 0:
+                    emp[jornada][0].append(emp[jornada-2][1][0])
+                    emp[jornada][1].append(emp[jornada-2][1][i+1])
+                elif i != partidos -1:
+                    emp[jornada][0].append(emp[jornada-2][0][i-1])
+                    emp[jornada][1].append(emp[jornada-2][1][i+1])
                 else:
-                    local[j].append(aux[j-1])
-                    visitante[j].append(visitante[j+1][i-2])
+                    emp[jornada][0].append(comodin)
+                    emp[jornada][1].append(emp[jornada-2][0][-2])
+                    
     # Devolvemos las dos listas
-    return local,visitante
+    return emp
